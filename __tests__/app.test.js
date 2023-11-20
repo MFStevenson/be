@@ -4,6 +4,7 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
 const endpointsJSON = require("../endpoints.json");
+require("jest-sorted");
 
 beforeEach(() => seed(data));
 afterAll(() => db.end());
@@ -63,7 +64,7 @@ describe("nc-news", () => {
         .expect(200)
         .then(({ body }) => {
           const { article } = body;
-           expect(article).toEqual(expectedArticle);
+          expect(article).toEqual(expectedArticle);
         });
     });
 
@@ -82,6 +83,28 @@ describe("nc-news", () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe("Something wrong with input");
+        });
+    });
+  });
+
+  describe("GET api/articles", () => {
+    test("GET 200: returns with all articles sorted via date in descending order when no query given", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          const { articles } = body;
+          expect(articles.length).toBe(13);
+          articles.forEach((article) => {
+            expect(typeof article.author).toBe("string");
+            expect(typeof article.title).toBe("string");
+            expect(typeof article.article_id).toBe("number");
+            expect(typeof article.topic).toBe("string");
+            expect(typeof article.created_at).toBe("string");
+            expect(typeof article.votes).toBe("number");
+            expect(typeof article.comment_count).toBe("number");
+          });
+          expect(articles).toBeSortedBy("created_at", { descending: true });
         });
     });
   });
