@@ -4,7 +4,7 @@ const {
   handleServerErrors,
   handlePsqlErrors,
 } = require("./error-handler");
-const { getArticleById } = require("./controllers/articles-controller");
+const { getArticleById, getArticles } = require("./controllers/articles-controller");
 const {
   handle404,
   getTopics,
@@ -19,6 +19,7 @@ app.use(express.json());
 app.get("/api/topics", getTopics);
 
 app.get("/api/articles/:article_id", getArticleById);
+app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id/comments", getArticleComments);
 app.get("/api", getEndpoints);
