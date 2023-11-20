@@ -139,18 +139,19 @@ describe("nc-news", () => {
         });
     });
 
-    test("GET 404: returnserror message when article_id given has no comments as id does not exist", () => {
+    test("GET 200: returns empty array when no comments are found at a valid id", () => {
       return request(app)
-        .get("/api/articles/1000/comments")
-        .expect(404)
+        .get("/api/articles/2/comments")
+        .expect(200)
         .then(({ body }) => {
-          expect(body.msg).toBe("no comments found at id given");
+          const { comments } = body;
+          expect(comments).toEqual([]);
         });
     });
 
-    test("GET 404: returns error message when article_id given has no commentst", () => {
+    test("GET 404: returns error message when article_id given has no comments as id does not exist", () => {
       return request(app)
-        .get("/api/articles/2/comments")
+        .get("/api/articles/1000/comments")
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe("no comments found at id given");
