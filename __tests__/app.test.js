@@ -3,7 +3,7 @@ const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
-const topics = require("../db/data/test-data/topics");
+const endpointsJSON = require("../endpoints.json");
 
 beforeEach(() => seed(data));
 afterAll(() => db.end());
@@ -40,30 +40,30 @@ describe("nc-news", () => {
         .get("/api")
         .expect(200)
         .then(({ body }) => {
-          expect(body.endpoints).toMatchObject({
-            "GET /api": {
-              description:
-                "serves up a json representation of all the available endpoints of the api",
-            },
-          });
+          expect(body.endpoints).toMatchObject(endpointsJSON);
         });
     });
   });
 
   describe("GET /api/articles/:article_id", () => {
     test("GET 200: returns specific article when given valid id", () => {
+      const expectedArticle = {
+        article_id: 1,
+        title: "Living in the shadow of a great man",
+        topic: "mitch",
+        author: "butter_bridge",
+        body: "I find this existence challenging",
+        created_at: "2020-07-09T21:11:00.000Z",
+        votes: 100,
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      };
       return request(app)
         .get("/api/articles/1")
         .expect(200)
         .then(({ body }) => {
-          expect(typeof body.article_id).toBe("number");
-          expect(typeof body.title).toBe("string");
-          expect(typeof body.topic).toBe("string");
-          expect(typeof body.author).toBe("string");
-          expect(typeof body.body).toBe("string");
-          expect(typeof body.created_at).toBe("string");
-          expect(typeof body.article_img_url).toBe("string");
-          expect(typeof body.votes).toBe("number");
+          const { article } = body;
+           expect(article).toEqual(expectedArticle);
         });
     });
 
@@ -72,17 +72,17 @@ describe("nc-news", () => {
         .get("/api/articles/1000")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("id not found");
+          expect(body.msg).toBe("article at id not found");
         });
     });
 
     test("GET 400: returns error message when invalid id is given", () => {
-        return request(app)
-          .get("/api/articles/pie")
-          .expect(400)
-          .then(({ body }) => {
-            expect(body.msg).toBe("Something wrong with input");
-          });
-      });
+      return request(app)
+        .get("/api/articles/pie")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Something wrong with input");
+        });
+    });
   });
 });
