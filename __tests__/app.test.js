@@ -3,6 +3,7 @@ const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
+const topics = require("../db/data/test-data/topics");
 
 beforeEach(() => seed(data));
 afterAll(() => db.end());
@@ -28,6 +29,22 @@ describe("nc-news", () => {
           topics.forEach((topic) => {
             expect(typeof topic.slug).toBe("string");
             expect(typeof topic.description).toBe("string");
+          });
+        });
+    });
+  });
+
+  describe("GET /api", () => {
+    test("GET 200: returns json object listing all endpoints with information about them", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.endpoints).toMatchObject({
+            "GET /api": {
+              description:
+                "serves up a json representation of all the available endpoints of the api",
+            },
           });
         });
     });
