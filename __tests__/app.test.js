@@ -279,7 +279,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         .expect(201)
         .then(({ body }) => {
           const { postedComment } = body;
-          expect(postedComment.article_id).toBe(1)
+          expect(postedComment.article_id).toBe(1);
           expect(postedComment.body).toBe(newComment.comment);
         });
     });
@@ -342,4 +342,31 @@ describe("GET /api/articles/:article_id/comments", () => {
         });
     });
   });
+
+  describe("DELETE /api/comments/:commend_id", () => {
+    test("DELETE 204: deletes the comment at the given id", () => {
+      return request(app).delete("/api/comments/1").expect(204);
+    });
+  
+    test("DELETE 400: returns error message when given an invalid comment_id", () => {
+      return request(app)
+        .delete("/api/comments/not")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Something wrong with input or body");
+        });
+    });
+  
+    test("DELETE 404: returns error message when given a comment id that does not exist", () => {
+      return request(app)
+        .delete("/api/comments/1000")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("no comment found at id given");
+        });
+    });
+  });
+  
+
 });
+

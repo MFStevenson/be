@@ -16,6 +16,7 @@ const {
 const {
   getArticleComments,
   postComment,
+  deleteComment,
 } = require("./controllers/comments.controller");
 
 const app = express();
@@ -29,6 +30,8 @@ app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id/comments", getArticleComments);
 app.post("/api/articles/:article_id/comments", postComment);
+
+app.delete("/api/comments/:comment_id", deleteComment);
 
 app.get("/api", getEndpoints);
 

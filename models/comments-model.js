@@ -10,7 +10,7 @@ exports.selectCommentsByArticleId = (article_id) => {
 
 exports.insertNewComment = (article_id, newComment) => {
   const { username, comment } = newComment;
-  
+
   const queryString = `INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING *; `;
 
   return db
@@ -18,4 +18,24 @@ exports.insertNewComment = (article_id, newComment) => {
     .then(({ rows }) => {
       return rows[0];
     });
+};
+
+exports.checkCommentIdExists = (comment_id) => {
+  const queryString = `SELECT comment_id FROM comments WHERE comment_id = $1;`;
+  return db.query(queryString, [comment_id]).then(({ rows }) => {
+    if (!rows.length) {
+      return Promise.reject({
+        status: 404,
+        msg: "no comment found at id given",
+      });
+    } else {
+      return rows;
+    }
+  });
+};
+
+exports.removeCommentById = (comment_id) => {
+  const queryString = "DELETE FROM comments WHERE comment_id = $1;";
+
+  return db.query(queryString, [comment_id]);
 };

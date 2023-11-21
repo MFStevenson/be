@@ -55,5 +55,8 @@
   "POST /api/articles/:article_id/comments": {
     "description": "Allows a user to add a comment to a spceific article. The required information is a username and body an the return value is the comment that was posted",
     "exampleResponse": { "comment": "my new comment" }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "Allows a user to delete a comment on status 204 so no content will be returned to the user"
   }
 }
