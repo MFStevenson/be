@@ -63,5 +63,9 @@
       "name": "jonny",
       "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
     }]
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "Allows a user to delete a comment on status 204 so no content will be returned to the user"
   }
 }
+
