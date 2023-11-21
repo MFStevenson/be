@@ -343,6 +343,22 @@ describe("GET /api/articles/:article_id/comments", () => {
     });
   });
 
+  describe("GET /api/users", () => {
+    test("GET 200: returns all of the users", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          const { users } = body;
+          expect(users.length).toBe(4);
+          users.forEach((user) => {
+            expect(typeof user.username).toBe("string");
+            expect(typeof user.name).toBe("string");
+            expect(typeof user.avatar_url).toBe("string");
+          });
+        });
+    });
+  });
   describe("DELETE /api/comments/:commend_id", () => {
     test("DELETE 204: deletes the comment at the given id", () => {
       return request(app).delete("/api/comments/1").expect(204);
