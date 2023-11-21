@@ -21,3 +21,17 @@ exports.selectArticles = () => {
     return rows;
   });
 };
+
+exports.checkArticleIdExists = (article_id) => {
+  const queryString = `SELECT article_id FROM articles WHERE article_id = $1;`;
+  return db.query(queryString, [article_id]).then(({ rows }) => {
+    if (!rows.length) {
+      return Promise.reject({
+        status: 404,
+        msg: "no article found at id given",
+      });
+    } else {
+      return rows;
+    }
+  });
+};
