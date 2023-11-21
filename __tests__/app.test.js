@@ -279,7 +279,8 @@ describe("GET /api/articles/:article_id/comments", () => {
         .expect(201)
         .then(({ body }) => {
           const { postedComment } = body;
-          expect(postedComment).toBe(newComment.comment);
+          expect(postedComment.article_id).toBe(1)
+          expect(postedComment.body).toBe(newComment.comment);
         });
     });
 

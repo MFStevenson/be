@@ -23,8 +23,7 @@ exports.postComment = (req, res, next) => {
   const newComment = req.body;
 
   return insertNewComment(article_id, newComment)
-    .then((newComment) => {
-      const postedComment = newComment.body;
+    .then((postedComment) => {
       return res.status(201).send({ postedComment });
     })
     .catch(next);
