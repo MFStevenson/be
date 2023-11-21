@@ -55,5 +55,18 @@
   "POST /api/articles/:article_id/comments": {
     "description": "Allows a user to add a comment to a spceific article. The required information is a username and body an the return value is the comment that was posted",
     "exampleResponse": { "comment": "my new comment" }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "Allows a user to alter the number of votes for an article",
+    "exampleResponse": {
+      "article_id": 1,
+      "title": "Living in the shadow of a great man",
+      "topic": "mitch",
+      "author": "butter_bridge",
+      "body": "I find this existence challenging",
+      "created_at": "2020-07-09T21:11:00.000Z",
+      "votes": 10,
+      "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+    }
   }
 }

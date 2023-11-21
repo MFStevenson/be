@@ -7,6 +7,7 @@ const {
 const {
   getArticleById,
   getArticles,
+  patchVotes,
 } = require("./controllers/articles-controller");
 const {
   handle404,
@@ -25,6 +26,7 @@ app.use(express.json());
 app.get("/api/topics", getTopics);
 
 app.get("/api/articles/:article_id", getArticleById);
+app.patch("/api/articles/:article_id", patchVotes)
 app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id/comments", getArticleComments);
