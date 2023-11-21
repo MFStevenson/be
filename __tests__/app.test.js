@@ -279,7 +279,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         .expect(201)
         .then(({ body }) => {
           const { postedComment } = body;
-          expect(postedComment.article_id).toBe(1)
+          expect(postedComment.article_id).toBe(1);
           expect(postedComment.body).toBe(newComment.comment);
         });
     });
@@ -339,6 +339,23 @@ describe("GET /api/articles/:article_id/comments", () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe("Something wrong with input or body");
+        });
+    });
+  });
+
+  describe("GET /api/users", () => {
+    test("GET 200: returns all of the users", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          const { users } = body;
+          expect(users.length).toBe(4);
+          users.forEach((user) => {
+            expect(typeof user.username).toBe("string");
+            expect(typeof user.name).toBe("string");
+            expect(typeof user.avatar_url).toBe("string");
+          });
         });
     });
   });

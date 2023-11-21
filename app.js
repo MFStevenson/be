@@ -17,6 +17,7 @@ const {
   getArticleComments,
   postComment,
 } = require("./controllers/comments.controller");
+const { getUsers } = require("./controllers/users-controller");
 
 const app = express();
 
@@ -31,6 +32,8 @@ app.get("/api/articles/:article_id/comments", getArticleComments);
 app.post("/api/articles/:article_id/comments", postComment);
 
 app.get("/api", getEndpoints);
+
+app.get("/api/users", getUsers);
 
 app.all("*", handle404);
 
