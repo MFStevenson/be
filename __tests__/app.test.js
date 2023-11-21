@@ -295,8 +295,8 @@ describe("GET /api/articles/:article_id/comments", () => {
         });
     });
 
-    test("POST 400: returns an error message stating that the yser is missing input data when no comment", () => {
-      const newCommentNoComment = { username: "testUser" };
+    test("POST 400: returns an error message stating that the user is missing input data when no comment", () => {
+      const newCommentNoComment = { username: "butter_bridge" };
 
       return request(app)
         .post("/api/articles/1/comments")
@@ -308,7 +308,7 @@ describe("GET /api/articles/:article_id/comments", () => {
     });
 
     test("POST 400: returns an error message when trying to post a comment at an invalid id", () => {
-      const newComment = { username: "testUser", comment: "test comment" };
+      const newComment = { username: "butter_bridge", comment: "test comment" };
       return request(app)
         .post("/api/articles/err/comments")
         .send(newComment)
