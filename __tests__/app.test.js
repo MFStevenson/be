@@ -5,7 +5,6 @@ const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
 const endpointsJSON = require("../endpoints.json");
 require("jest-sorted");
-require("jest-sorted");
 
 beforeEach(() => seed(data));
 afterAll(() => db.end());
@@ -84,7 +83,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/pie")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Something wrong with input");
+        expect(body.msg).toBe("Something wrong with input or body");
       });
   });
 });
@@ -156,7 +155,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/1000/comments")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("no comments found at id given");
+        expect(body.msg).toBe("no article found at id given");
       });
   });
 
@@ -165,7 +164,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/hello/comments")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Something wrong with input");
+        expect(body.msg).toBe("Something wrong with input or body");
       });
   });
   describe("GET api/articles", () => {
@@ -257,7 +256,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         .get("/api/articles/1000/comments")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("no comments found at id given");
+          expect(body.msg).toBe("no article found at id given");
         });
     });
 
@@ -266,7 +265,80 @@ describe("GET /api/articles/:article_id/comments", () => {
         .get("/api/articles/hello/comments")
         .expect(400)
         .then(({ body }) => {
-          expect(body.msg).toBe("Something wrong with input");
+          expect(body.msg).toBe("Something wrong with input or body");
+        });
+    });
+  });
+
+  describe("POST /api/articles/:article_id/comments", () => {
+    test("POST 201: posts the user's comment", () => {
+      const newComment = { username: "butter_bridge", comment: "test comment" };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(201)
+        .then(({ body }) => {
+          const { postedComment } = body;
+          expect(postedComment.article_id).toBe(1)
+          expect(postedComment.body).toBe(newComment.comment);
+        });
+    });
+
+    test("POST 400: returns an error message stating that the user is missing input data when no username", () => {
+      const newCommentNoUser = { comment: "test comment" };
+
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(newCommentNoUser)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Something wrong with input or body");
+        });
+    });
+
+    test("POST 400: returns an error message stating that the user is missing input data when no comment", () => {
+      const newCommentNoComment = { username: "butter_bridge" };
+
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(newCommentNoComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Something wrong with input or body");
+        });
+    });
+
+    test("POST 400: returns an error message when trying to post a comment at an invalid id", () => {
+      const newComment = { username: "butter_bridge", comment: "test comment" };
+      return request(app)
+        .post("/api/articles/err/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Something wrong with input or body");
+        });
+    });
+
+    test("POST 404: returns an error message when user does not exist", () => {
+      const newComment = { username: "testUser", comment: "test comment" };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Something wrong with input or body");
+        });
+    });
+
+    test("POST 400: returns an error message when a user tries to add a comment at an id that does not exist", () => {
+      const newComment = { username: "butter_bridge", comment: "test comment" };
+
+      return request(app)
+        .post("/api/articles/1000/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Something wrong with input or body");
         });
     });
   });
