@@ -27,11 +27,23 @@ exports.checkArticleIdExists = (article_id) => {
   return db.query(queryString, [article_id]).then(({ rows }) => {
     if (!rows.length) {
       return Promise.reject({
-        status: 404,
-        msg: "no article found at id given",
+        status: 400,
+        msg: "Something wrong with input or body",
       });
     } else {
       return rows;
+    }
+  });
+};
+
+exports.updateArticleVotes = (article_id, inc_votes) => {
+  const queryString = `UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;`;
+
+  return db.query(queryString, [inc_votes, article_id]).then(({ rows }) => {
+    if (rows[0].votes < 0) {
+      return Promise.reject({status: 400, msg: 'Something wrong with input'})
+    } else {
+      return rows[0];
     }
   });
 };

@@ -150,12 +150,12 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 
-  test("GET 404: returns error message when article_id given has no comments as id does not exist", () => {
+  test("GET 400: returns error message when article_id given has no comments as id does not exist", () => {
     return request(app)
       .get("/api/articles/1000/comments")
-      .expect(404)
+      .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("no article found at id given");
+        expect(body.msg).toBe("Something wrong with input or body");
       });
   });
 
@@ -251,12 +251,12 @@ describe("GET /api/articles/:article_id/comments", () => {
         });
     });
 
-    test("GET 404: returns error message when article_id given has no comments as id does not exist", () => {
+    test("GET 400: returns error message when article_id given has no comments as id does not exist", () => {
       return request(app)
         .get("/api/articles/1000/comments")
-        .expect(404)
+        .expect(400)
         .then(({ body }) => {
-          expect(body.msg).toBe("no article found at id given");
+          expect(body.msg).toBe("Something wrong with input or body");
         });
     });
 
@@ -363,7 +363,7 @@ describe("GET /api/articles/:article_id/comments", () => {
     test("DELETE 204: deletes the comment at the given id", () => {
       return request(app).delete("/api/comments/1").expect(204);
     });
-  
+
     test("DELETE 400: returns error message when given an invalid comment_id", () => {
       return request(app)
         .delete("/api/comments/not")
@@ -372,7 +372,7 @@ describe("GET /api/articles/:article_id/comments", () => {
           expect(body.msg).toBe("Something wrong with input or body");
         });
     });
-  
+
     test("DELETE 404: returns error message when given a comment id that does not exist", () => {
       return request(app)
         .delete("/api/comments/1000")
@@ -382,7 +382,126 @@ describe("GET /api/articles/:article_id/comments", () => {
         });
     });
   });
-  
-
 });
 
+describe("PATCH /api/articles/:article_id", () => {
+  test("PATCH 200: Returns the updated article with the votes incremented by the given amount", () => {
+    const updatedData = { inc_votes: 10 };
+    const expectedArticle = {
+      article_id: 1,
+      title: "Living in the shadow of a great man",
+      topic: "mitch",
+      author: "butter_bridge",
+      body: "I find this existence challenging",
+      created_at: "2020-07-09T21:11:00.000Z",
+      votes: 110,
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+
+    return request(app)
+      .patch("/api/articles/1")
+      .send(updatedData)
+      .expect(200)
+      .then(({ body }) => {
+        const { updatedArticle } = body;
+        expect(updatedArticle).toEqual(expectedArticle);
+      });
+  });
+
+  test("PATCH 200: Returns the updated article with the votes decremented by the given amount", () => {
+    const updatedData = { inc_votes: -10 };
+    const expectedArticle = {
+      article_id: 1,
+      title: "Living in the shadow of a great man",
+      topic: "mitch",
+      author: "butter_bridge",
+      body: "I find this existence challenging",
+      created_at: "2020-07-09T21:11:00.000Z",
+      votes: 90,
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+
+    return request(app)
+      .patch("/api/articles/1")
+      .send(updatedData)
+      .expect(200)
+      .then(({ body }) => {
+        const { updatedArticle } = body;
+        expect(updatedArticle).toEqual(expectedArticle);
+      });
+  });
+
+  test("PATCH 200: Returns the updated article and allows votes to be 0", () => {
+    const updatedData = { inc_votes: -100 };
+    const expectedArticle = {
+      article_id: 1,
+      title: "Living in the shadow of a great man",
+      topic: "mitch",
+      author: "butter_bridge",
+      body: "I find this existence challenging",
+      created_at: "2020-07-09T21:11:00.000Z",
+      votes: 0,
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+
+    return request(app)
+      .patch("/api/articles/1")
+      .send(updatedData)
+      .expect(200)
+      .then(({ body }) => {
+        const { updatedArticle } = body;
+        expect(updatedArticle).toEqual(expectedArticle);
+      });
+  });
+
+  test("PATCH 400: Returns an error when the article_id does not exist", () => {
+    const updatedData = { inc_votes: -10 };
+
+    return request(app)
+      .patch("/api/articles/1000")
+      .send(updatedData)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Something wrong with input or body");
+      });
+  });
+
+  test("PATCH 400: Returns an error when the article_id is invalid", () => {
+    const updatedData = { inc_votes: 10 };
+
+    return request(app)
+      .patch("/api/articles/coffee")
+      .send(updatedData)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Something wrong with input or body");
+      });
+  });
+
+  test("PATCH 400: Returns an error when the decrement value is not a number", () => {
+    const updatedData = { inc_votes: true };
+
+    return request(app)
+      .patch("/api/articles/1")
+      .send(updatedData)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Something wrong with input or body");
+      });
+  });
+
+  test("PATCH 400: Returns an error when the votes would go below 0 with the given decrement value", () => {
+    const updatedData = { inc_votes: -110 };
+
+    return request(app)
+      .patch("/api/articles/1")
+      .send(updatedData)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Something wrong with input");
+      });
+  });
+});
