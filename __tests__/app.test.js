@@ -271,7 +271,7 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 
   describe("POST /api/articles/:article_id/comments", () => {
-    test("POST 200: posts the user's comment", () => {
+    test("POST 201: posts the user's comment", () => {
       const newComment = { username: "butter_bridge", comment: "test comment" };
       return request(app)
         .post("/api/articles/1/comments")
@@ -330,7 +330,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         });
     });
 
-    test("POST 404: returns an error message when a user tries to add a comment at an id that does not exist", () => {
+    test("POST 400: returns an error message when a user tries to add a comment at an id that does not exist", () => {
       const newComment = { username: "butter_bridge", comment: "test comment" };
 
       return request(app)
