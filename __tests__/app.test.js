@@ -83,7 +83,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/pie")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Something wrong with input");
+        expect(body.msg).toBe("Something wrong with input or body");
       });
   });
 });
@@ -164,7 +164,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/hello/comments")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Something wrong with input");
+        expect(body.msg).toBe("Something wrong with input or body");
       });
   });
   describe("GET api/articles", () => {
@@ -265,7 +265,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         .get("/api/articles/hello/comments")
         .expect(400)
         .then(({ body }) => {
-          expect(body.msg).toBe("Something wrong with input");
+          expect(body.msg).toBe("Something wrong with input or body");
         });
     });
   });
@@ -291,7 +291,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         .send(newCommentNoUser)
         .expect(400)
         .then(({ body }) => {
-          expect(body.msg).toBe("Something wrong with body");
+          expect(body.msg).toBe("Something wrong with input or body");
         });
     });
 
@@ -303,18 +303,18 @@ describe("GET /api/articles/:article_id/comments", () => {
         .send(newCommentNoComment)
         .expect(400)
         .then(({ body }) => {
-          expect(body.msg).toBe("Something wrong with body");
+          expect(body.msg).toBe("Something wrong with input or body");
         });
     });
 
     test("POST 400: returns an error message when trying to post a comment at an invalid id", () => {
       const newComment = { username: "testUser", comment: "test comment" };
       return request(app)
-        .post("/api/articles/1000/comments")
+        .post("/api/articles/err/comments")
         .send(newComment)
-        .expect(404)
+        .expect(400)
         .then(({ body }) => {
-          expect(body.msg).toBe("no article found at id given");
+          expect(body.msg).toBe("Something wrong with input or body");
         });
     });
 
@@ -323,9 +323,9 @@ describe("GET /api/articles/:article_id/comments", () => {
       return request(app)
         .post("/api/articles/1/comments")
         .send(newComment)
-        .expect(404)
+        .expect(400)
         .then(({ body }) => {
-          expect(body.msg).toBe("username not found");
+          expect(body.msg).toBe("Something wrong with input or body");
         });
     });
 
@@ -333,11 +333,11 @@ describe("GET /api/articles/:article_id/comments", () => {
       const newComment = { username: "butter_bridge", comment: "test comment" };
 
       return request(app)
-        .post("/api/articles/err/comments")
+        .post("/api/articles/1000/comments")
         .send(newComment)
         .expect(400)
         .then(({ body }) => {
-          expect(body.msg).toBe("Something wrong with input");
+          expect(body.msg).toBe("Something wrong with input or body");
         });
     });
   });

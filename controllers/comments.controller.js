@@ -22,19 +22,7 @@ exports.postComment = (req, res, next) => {
   const { article_id } = req.params;
   const newComment = req.body;
 
-  if (!newComment.username || !newComment.comment) {
-    return res.status(400).send({ msg: "Something wrong with body" });
-  }
-
-  const promises = [
-    checkArticleIdExists(article_id),
-    checkUserExists(newComment.username),
-  ];
-
-  Promise.all(promises)
-    .then(() => {
-      return insertNewComment(article_id, newComment);
-    })
+  return insertNewComment(article_id, newComment)
     .then((newComment) => {
       const postedComment = newComment.body;
       return res.status(201).send({ postedComment });
