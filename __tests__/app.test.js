@@ -65,7 +65,7 @@ describe("GET /api/articles/:article_id", () => {
       .expect(200)
       .then(({ body }) => {
         const { article } = body;
-        expect(article).toEqual(expectedArticle);
+        expect(article).toMatchObject(expectedArticle);
       });
   });
 
@@ -506,45 +506,69 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 });
 
-describe("Queries", () => {
-  describe("GET api/articles?topic", () => {
-    test("GET 200: return the articles of a specific topic to a user when given a topic that exists", () => {
-      return request(app)
-        .get("/api/articles?topic=mitch")
-        .expect(200)
-        .then(({ body }) => {
-          const { articles } = body;
-          expect(articles.length).toBe(12);
-          articles.forEach((article) => {
-            expect(article).toMatchObject({
-              title: expect.any(String),
-              topic: "mitch",
-              author: expect.any(String),
-              body: expect.any(String),
-              created_at: expect.any(String),
-              article_img_url: expect.any(String),
+describe("GET /api/articles/:article_id (comment_count)", () => {
+  test("GET 200: returns article at specific ID with added comment_count", () => {
+    const expectedArticle = {
+      article_id: 1,
+      title: "Living in the shadow of a great man",
+      topic: "mitch",
+      author: "butter_bridge",
+      body: "I find this existence challenging",
+      created_at: "2020-07-09T21:11:00.000Z",
+      votes: 100,
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      comment_count: 11,
+    };
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toEqual(expectedArticle);
+      });
+  });
+  
+  describe("Queries", () => {
+    describe("GET api/articles?topic", () => {
+      test("GET 200: return the articles of a specific topic to a user when given a topic that exists", () => {
+        return request(app)
+          .get("/api/articles?topic=mitch")
+          .expect(200)
+          .then(({ body }) => {
+            const { articles } = body;
+            expect(articles.length).toBe(12);
+            articles.forEach((article) => {
+              expect(article).toMatchObject({
+                title: expect.any(String),
+                topic: "mitch",
+                author: expect.any(String),
+                body: expect.any(String),
+                created_at: expect.any(String),
+                article_img_url: expect.any(String),
+              });
             });
           });
-        });
-    });
+      });
 
-    test("GET 200: returns an empty array when given a topic that exists but has no articles", () => {
-      return request(app)
-        .get("/api/articles?topic=sabrina")
-        .expect(200)
-        .then(({ body }) => {
-          const { articles } = body;
-          expect(articles).toEqual([]);
-        });
-    });
+      test("GET 200: returns an empty array when given a topic that exists but has no articles", () => {
+        return request(app)
+          .get("/api/articles?topic=sabrina")
+          .expect(200)
+          .then(({ body }) => {
+            const { articles } = body;
+            expect(articles).toEqual([]);
+          });
+      });
 
-    test("GET 404: returns an error message when the topic does not exist", () => {
-      return request(app)
-        .get("/api/articles?topic=john")
-        .expect(404)
-        .then(({ body }) => {
-          expect(body.msg).toBe("Topic does not exist");
-        });
+      test("GET 404: returns an error message when the topic does not exist", () => {
+        return request(app)
+          .get("/api/articles?topic=john")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Topic does not exist");
+          });
+      });
     });
   });
 });
