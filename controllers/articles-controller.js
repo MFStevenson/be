@@ -4,6 +4,7 @@ const {
   updateArticleVotes,
   checkArticleIdExists,
 } = require("../models/articles-model");
+const { checkTopicExists } = require("../models/topics-model");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
@@ -20,11 +21,24 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  selectArticles()
-    .then((articles) => {
-      return res.status(200).send({ articles });
-    })
-    .catch(next);
+  const { topic } = req.query;
+
+  if (topic) {
+    checkTopicExists(topic)
+      .then(() => {
+        return selectArticles(topic);
+      })
+      .then((articles) => {
+        return res.status(200).send({ articles });
+      })
+      .catch(next);
+  } else {
+    selectArticles()
+      .then((articles) => {
+        return res.status(200).send({ articles });
+      })
+      .catch(next);
+  }
 };
 
 exports.patchVotes = (req, res, next) => {
