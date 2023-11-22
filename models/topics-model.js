@@ -1,8 +1,23 @@
 const db = require("../db/connection");
 
 exports.selectTopics = () => {
-    const queryString = `SELECT * FROM topics`
-    return db.query(queryString).then(({rows}) => {
-        return rows
-    })
+  const queryString = `SELECT * FROM topics`;
+  return db.query(queryString).then(({ rows }) => {
+    return rows;
+  });
+};
+
+exports.checkTopicExists = (slug) => {
+  const queryString = "SELECT slug FROM topics where slug = $1";
+
+  return db.query(queryString, [slug]).then(({ rows }) => {
+    if (!rows.length) {
+      return Promise.reject({
+        status: 404,
+        msg: "Topic does not exist",
+      });
+    } else {
+      return rows;
+    }
+  });
 };
