@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const { checkTopicExists } = require("./topics-model");
 
 exports.selectArticleById = (article_id) => {
   const queryString = `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.body, articles.created_at, articles.votes, articles.article_img_url, 
@@ -7,7 +8,7 @@ exports.selectArticleById = (article_id) => {
   LEFT JOIN comments ON comments.article_id = articles.article_id
   WHERE articles.article_id = $1
   GROUP BY articles.article_id
-  `
+  `;
 
   return db.query(queryString, [article_id]).then(({ rows }) => {
     return rows[0];
@@ -15,14 +16,17 @@ exports.selectArticleById = (article_id) => {
 };
 
 exports.selectArticles = (topic) => {
-  let queryString = "";
 
   if (topic) {
-    const queryString = `SELECT * FROM articles WHERE topic = $1  ORDER BY created_at DESC`;
+    return checkTopicExists(topic)
+      .then(() => {
+        const queryString = `SELECT * FROM articles WHERE topic = $1  ORDER BY created_at DESC`;
 
-    return db.query(queryString, [topic]).then(({ rows }) => {
-      return rows;
-    });
+        return db.query(queryString, [topic]);
+      })
+      .then(({ rows }) => {
+        return rows;
+      });
   } else {
     const queryString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes,
     CAST(COUNT(comments.article_id) AS INT) AS comment_count
@@ -42,8 +46,8 @@ exports.checkArticleIdExists = (article_id) => {
   return db.query(queryString, [article_id]).then(({ rows }) => {
     if (!rows.length) {
       return Promise.reject({
-        status: 400,
-        msg: "Something wrong with input or body",
+        status: 404,
+        msg: "Article not found",
       });
     } else {
       return rows;

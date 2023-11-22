@@ -9,7 +9,6 @@ exports.selectTopics = () => {
 
 exports.checkTopicExists = (slug) => {
   const queryString = "SELECT slug FROM topics where slug = $1";
-
   return db.query(queryString, [slug]).then(({ rows }) => {
     if (!rows.length) {
       return Promise.reject({
