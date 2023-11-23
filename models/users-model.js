@@ -16,9 +16,17 @@ exports.checkUserExists = (username) => {
 };
 
 exports.selectAllUsers = () => {
-  const queryString = `SELECT * FROM users`
+  const queryString = `SELECT * FROM users`;
 
-  return db.query(queryString).then(({rows}) => {
-    return rows
-  })
-}
+  return db.query(queryString).then(({ rows }) => {
+    return rows;
+  });
+};
+
+exports.selectUser = (username) => {
+  const queryString = `SELECT * FROM users WHERE username = $1`;
+
+  return db.query(queryString, [username]).then(({ rows }) => {
+    return rows[0];
+  });
+};
