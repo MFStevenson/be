@@ -97,5 +97,24 @@
       "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
       "comment_count": 11
     }
+  },
+  "GET /api/users/:username": {
+    "description": "Serves the user with the users data at the specified username",
+    "exampleResponse": {
+      "username": "butter_bridge",
+      "name": "jonny",
+      "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+    }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "Allows a user to increment or decrement the votes at the comment_id specified, serves the user with the comment and the updated vote count",
+    "exampleResponse": {
+      "comment_id": 1,
+      "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+      "votes": 16,
+      "author": "butter_bridge",
+      "article_id": 9,
+      "created_at": 1586179020000
+    }
   }
 }

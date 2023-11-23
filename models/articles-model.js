@@ -1,5 +1,4 @@
 const db = require("../db/connection");
-const { sort } = require("../db/data/test-data/articles");
 const { validateQuery } = require("../db/seeds/utils");
 const { checkTopicExists } = require("./topics-model");
 

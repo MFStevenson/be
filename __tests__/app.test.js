@@ -529,7 +529,6 @@ describe("GET /api/articles/:article_id (comment_count)", () => {
         expect(article).toEqual(expectedArticle);
       });
   });
-  
 });
 
 describe("GET /api/users/:username", () => {
@@ -549,9 +548,111 @@ describe("GET /api/users/:username", () => {
       });
   });
 
-  test('GET 404: returns an error message when the user does not exist', () => {
-    return request(app).get('/api/users/not_a_user').expect(404).then(({body}) => expect(body.msg).toBe('username not found'))
-  })
+  test("GET 404: returns an error message when the user does not exist", () => {
+    return request(app)
+      .get("/api/users/not_a_user")
+      .expect(404)
+      .then(({ body }) => expect(body.msg).toBe("username not found"));
+  });
+});
+
+describe("PATCH /api/comments/:comment_id", () => {
+  test("GET 200: returns the comment with incremented vote", () => {
+    const updatedData = { inc_votes: 10 };
+    const expected = {
+      comment_id: 1,
+      body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+      votes: 26,
+      author: "butter_bridge",
+      article_id: 9,
+      created_at: "2020-04-06T13:17:00.000Z",
+    };
+
+    return request(app)
+      .patch("/api/comments/1")
+      .send(updatedData)
+      .expect(200)
+      .then(({ body }) => {
+        const { updatedComment } = body;
+        expect(updatedComment).toEqual(expected);
+      });
+  });
+
+  test("GET 200: returns the comment with decremented vote", () => {
+    const updatedData = { inc_votes: -10 };
+    const expected = {
+      comment_id: 1,
+      body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+      votes: 6,
+      author: "butter_bridge",
+      article_id: 9,
+      created_at: "2020-04-06T13:17:00.000Z",
+    };
+
+    return request(app)
+      .patch("/api/comments/1")
+      .send(updatedData)
+      .expect(200)
+      .then(({ body }) => {
+        const { updatedComment } = body;
+        expect(updatedComment).toEqual(expected);
+      });
+  });
+
+  test("GET 200: returns the comment with 0 votes", () => {
+    const updatedData = { inc_votes: -16 };
+    const expected = {
+      comment_id: 1,
+      body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+      votes: 0,
+      author: "butter_bridge",
+      article_id: 9,
+      created_at: "2020-04-06T13:17:00.000Z",
+    };
+
+    return request(app)
+      .patch("/api/comments/1")
+      .send(updatedData)
+      .expect(200)
+      .then(({ body }) => {
+        const { updatedComment } = body;
+        expect(updatedComment).toEqual(expected);
+      });
+  });
+
+  test("GET 400: returns an error when the user tries to decrement the votes by a number greater than the current votes", () => {
+    const updatedData = { inc_votes: -26 };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(updatedData)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Something wrong with input");
+      });
+  });
+
+  test("GET 400 returns an error message when the comment_id is invalid", () => {
+    const updatedData = { inc_votes: 10 };
+
+    return request(app)
+      .patch("/api/comments/boo")
+      .send(updatedData)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Something wrong with input or body");
+      });
+  });
+
+  test("GET 404: returns an error messae when the comment_id is not found", () => {
+    const updatedData = { inc_votes: -26 };
+    return request(app)
+      .patch("/api/comments/1000")
+      .send(updatedData)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("no comment found at id given");
+      });
+  });
 });
 
 describe("Queries", () => {
