@@ -82,5 +82,20 @@
   },
   "DELETE /api/comments/:comment_id": {
     "description": "Allows a user to delete a comment on status 204 so no content will be returned to the user"
+  },
+  "GET /api/articles?sort_by=x&&order=y": {
+    "description": "Allows the user to sort the data by a specific column and provide an order",
+    "queries": ["sort_by", "order"],
+    "exampleResponse": {
+      "article_id": 1,
+      "title": "Living in the shadow of a great man",
+      "topic": "mitch",
+      "author": "butter_bridge",
+      "body": "I find this existence challenging",
+      "created_at": "2020-07-09T21:11:00.000Z",
+      "votes": 100,
+      "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      "comment_count": 11
+    }
   }
 }

@@ -20,3 +20,20 @@ exports.formatComments = (comments, idLookup) => {
     };
   });
 };
+
+exports.validateQuery = (sortBy, order) => {
+  const allowedInputField = [
+    "article_id",
+    "title",
+    "topic",
+    "author",
+    "body",
+    "created_at",
+    "votes",
+    "article_img_url",
+    "comment_count",
+  ];
+  const allowedOrders = ["asc", "desc"];
+
+  return allowedInputField.includes(sortBy) && allowedOrders.includes(order);
+};

@@ -2,6 +2,7 @@ const {
   convertTimestampToDate,
   createRef,
   formatComments,
+  validateQuery
 } = require("../db/seeds/utils");
 
 describe("convertTimestampToDate", () => {
@@ -102,3 +103,40 @@ describe("formatComments", () => {
     expect(formattedComments[0].created_at).toEqual(new Date(timestamp));
   });
 });
+
+describe('validateQuery()', () => {
+  test('returns input if its a valid field', () => {
+    const input = 'title'
+
+    const actual = validateQuery(input, 'asc')
+
+    expect(actual).toBe(true)
+  })
+  test('returns false if field is invalid', () => {
+    const input = 'bananana'
+    const actual = validateQuery(input, 'asc')
+    expect(actual).toBe(false)
+  })
+
+  test('returns false if both fields are invalud', () => {
+    const inputSort = 'banana'
+    const inputOrder = 'apple'
+
+    const actual = validateQuery(inputSort, inputOrder)
+
+    expect(actual).toBe(false)
+  })
+
+  test('returns false if one value is invalid', () => {
+    const correctSort = 'body'
+    const correctOrder = 'asc'
+    const incorrectSort = 'help'
+    const incorrectOrder = 'while'
+
+    const actualIncorrectSort = validateQuery(incorrectSort, correctOrder)
+    const actualIncorrectOrder = validateQuery(correctSort, incorrectOrder)
+
+    expect(actualIncorrectSort).toBe(false)
+    expect(actualIncorrectOrder).toBe(false)
+  })
+})

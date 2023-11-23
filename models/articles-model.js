@@ -1,4 +1,6 @@
 const db = require("../db/connection");
+const { sort } = require("../db/data/test-data/articles");
+const { validateQuery } = require("../db/seeds/utils");
 const { checkTopicExists } = require("./topics-model");
 
 exports.selectArticleById = (article_id) => {
@@ -15,29 +17,35 @@ exports.selectArticleById = (article_id) => {
   });
 };
 
-exports.selectArticles = (topic) => {
+exports.selectArticles = (topic, sort_by, order) => {
+  if (!sort_by) sort_by = "created_at";
+  if (!order) order = "desc";
 
-  if (topic) {
-    return checkTopicExists(topic)
-      .then(() => {
-        const queryString = `SELECT * FROM articles WHERE topic = $1  ORDER BY created_at DESC`;
+  if (!validateQuery(sort_by, order)) {
+    return Promise.reject({ status: 400, msg: "invalid query" });
+  } else {
+    if (topic) {
+      return checkTopicExists(topic)
+        .then(() => {
+          const queryString = `SELECT * FROM articles WHERE topic = $1  ORDER BY ${sort_by} ${order}`;
 
-        return db.query(queryString, [topic]);
-      })
-      .then(({ rows }) => {
+          return db.query(queryString, [topic]);
+        })
+        .then(({ rows }) => {
+          return rows;
+        });
+    } else {
+      const queryString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes,
+      CAST(COUNT(comments.article_id) AS INT) AS comment_count
+      FROM articles
+      LEFT JOIN comments ON comments.article_id = articles.article_id 
+      GROUP BY comments.article_id, articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes 
+      ORDER BY ${sort_by} ${order}`;
+
+      return db.query(queryString).then(({ rows }) => {
         return rows;
       });
-  } else {
-    const queryString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes,
-    CAST(COUNT(comments.article_id) AS INT) AS comment_count
-    FROM articles
-    LEFT JOIN comments ON comments.article_id = articles.article_id 
-    GROUP BY comments.article_id, articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes 
-    ORDER BY created_at DESC`;
-
-    return db.query(queryString).then(({ rows }) => {
-      return rows;
-    });
+    }
   }
 };
 
