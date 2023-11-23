@@ -585,39 +585,39 @@ describe("Queries", () => {
     }),
       test("GET 200: sorts all of the articles by a given field in descending order", () => {
         return request(app)
-        .get("/api/articles?sort_by=title")
-        .expect(200)
-        .then(({ body }) => {
-          const { articles } = body;
-          expect(articles.length).toBe(13);
-          expect(articles).toBeSortedBy("title", { descending: true });
-        });
+          .get("/api/articles?sort_by=title")
+          .expect(200)
+          .then(({ body }) => {
+            const { articles } = body;
+            expect(articles.length).toBe(13);
+            expect(articles).toBeSortedBy("title", { descending: true });
+          });
       }),
       test("GET 200: returns all of the articles by a given field in ascending order", () => {
         return request(app)
-        .get("/api/articles?sort_by=author&&order=asc")
-        .expect(200)
-        .then(({ body }) => {
-          const { articles } = body;
-          expect(articles.length).toBe(13);
-          expect(articles).toBeSortedBy("author");
-        });
+          .get("/api/articles?sort_by=author&&order=asc")
+          .expect(200)
+          .then(({ body }) => {
+            const { articles } = body;
+            expect(articles.length).toBe(13);
+            expect(articles).toBeSortedBy("author");
+          });
       }),
       test("GET 400: returns an error message when user provides a bad input value for sort_by", () => {
         return request(app)
-        .get("/api/articles?sort_by=hello")
-        .expect(400)
-        .then(({ body }) => {
-          expect(body.msg).toBe("invalid query");
-        });
+          .get("/api/articles?sort_by=hello")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("invalid query");
+          });
       }),
       test("GET 400: returns an error message when user provides a bad input value for order", () => {
         return request(app)
-        .get("/api/articles?sort_by=body&&order=green")
-        .expect(400)
-        .then(({ body }) => {
-          expect(body.msg).toBe("invalid query");
-        });
+          .get("/api/articles?sort_by=body&&order=green")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("invalid query");
+          });
       });
   });
 });
