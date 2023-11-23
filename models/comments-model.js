@@ -1,4 +1,6 @@
 const db = require("../db/connection");
+const { checkArticleIdExists } = require("./articles-model");
+const { checkUserExists } = require("./users-model");
 
 exports.selectCommentsByArticleId = (article_id) => {
   const queryString = `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at`;
@@ -11,10 +13,21 @@ exports.selectCommentsByArticleId = (article_id) => {
 exports.insertNewComment = (article_id, newComment) => {
   const { username, comment } = newComment;
 
-  const queryString = `INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING *; `;
+  if (!username)
+    return Promise.reject({
+      status: 400,
+      msg: "Something wrong with input or body",
+    });
 
-  return db
-    .query(queryString, [username, comment, article_id])
+  return checkArticleIdExists(article_id)
+    .then(() => {
+      return checkUserExists(username);
+    })
+    .then(() => {
+      const queryString = `INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING *; `;
+
+      return db.query(queryString, [username, comment, article_id]);
+    })
     .then(({ rows }) => {
       return rows[0];
     });

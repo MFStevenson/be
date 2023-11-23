@@ -5,7 +5,6 @@ const {
   removeCommentById,
   checkCommentIdExists,
 } = require("../models/comments-model");
-const { checkUserExists } = require("../models/users-model");
 
 exports.getArticleComments = (req, res, next) => {
   const { article_id } = req.params;

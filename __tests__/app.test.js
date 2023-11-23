@@ -150,12 +150,12 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 
-  test("GET 400: returns error message when article_id given has no comments as id does not exist", () => {
+  test("GET 404: returns error message when article_id given has no comments as id does not exist", () => {
     return request(app)
       .get("/api/articles/1000/comments")
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Something wrong with input or body");
+        expect(body.msg).toBe("Article not found");
       });
   });
 
@@ -253,12 +253,12 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 
-  test("GET 400: returns error message when article_id given has no comments as id does not exist", () => {
+  test("GET 404: returns error message when article_id given has no comments as id does not exist", () => {
     return request(app)
       .get("/api/articles/1000/comments")
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Something wrong with input or body");
+        expect(body.msg).toBe("Article not found");
       });
   });
 
@@ -326,21 +326,21 @@ describe("POST /api/articles/:article_id/comments", () => {
     return request(app)
       .post("/api/articles/1/comments")
       .send(newComment)
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Something wrong with input or body");
+        expect(body.msg).toBe("username not found");
       });
   });
 
-  test("POST 400: returns an error message when a user tries to add a comment at an id that does not exist", () => {
+  test("POST 404: returns an error message when a user tries to add a comment at an id that does not exist", () => {
     const newComment = { username: "butter_bridge", comment: "test comment" };
 
     return request(app)
       .post("/api/articles/1000/comments")
       .send(newComment)
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Something wrong with input or body");
+        expect(body.msg).toBe("Article not found");
       });
   });
 });
@@ -458,15 +458,15 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 
-  test("PATCH 400: Returns an error when the article_id does not exist", () => {
+  test("PATCH 404: Returns an error when the article_id does not exist", () => {
     const updatedData = { inc_votes: -10 };
 
     return request(app)
       .patch("/api/articles/1000")
       .send(updatedData)
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Something wrong with input or body");
+        expect(body.msg).toBe("Article not found");
       });
   });
 
