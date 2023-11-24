@@ -655,6 +655,119 @@ describe("PATCH /api/comments/:comment_id", () => {
   });
 });
 
+describe("POST /api/articles", () => {
+  test("POST 201: returns the posted article to the user", () => {
+    const new_article = {
+      author: "rogersop",
+      title: "new article",
+      body: "content",
+      topic: "mitch",
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(new_article)
+      .expect(201)
+      .then(({ body }) => {
+        const { postedArticle } = body;
+
+        expect(postedArticle).toMatchObject({
+          article_id: expect.any(Number),
+          votes: 0,
+          author: "rogersop",
+          title: "new article",
+          body: "content",
+          topic: "mitch",
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          created_at: expect.any(String),
+          comment_count: expect.any(Number),
+        });
+      });
+  });
+  test("POST 201: returns the posted article when article_img_url not provided", () => {
+    const new_article = {
+      author: "lurker",
+      title: "new article",
+      body: "content",
+      topic: "cats",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(new_article)
+      .expect(201)
+      .then(({ body }) => {
+        const { postedArticle } = body;
+
+        expect(postedArticle).toMatchObject({
+          article_id: expect.any(Number),
+          votes: 0,
+          author: "lurker",
+          title: "new article",
+          body: "content",
+          topic: "cats",
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          created_at: expect.any(String),
+          comment_count: expect.any(Number),
+        });
+      });
+  });
+
+  test("POST 404: returns an error message if the user does not exist", () => {
+    const new_article = {
+      author: "boop",
+      title: "new article",
+      body: "content",
+      topic: "cats",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(new_article)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("username not found");
+      });
+  });
+
+  test("POST 404: returns an error message if the user provides a topic that does not exist", () => {
+    const new_article = {
+      author: "butter_bridge",
+      title: "new article",
+      body: "content",
+      topic: "music",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(new_article)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Topic does not exist");
+      });
+  });
+
+  test("POST 400: returns an error message if the user does not provide all of the relevant information", () => {
+    const new_article = {
+      title: "new article",
+      body: "content",
+      topic: "cats",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(new_article)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("username not found");
+      });
+  });
+});
+
 describe("Queries", () => {
   describe("GET api/articles?topic", () => {
     test("GET 200: return the articles of a specific topic to a user when given a topic that exists", () => {
