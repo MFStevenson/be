@@ -37,3 +37,7 @@ exports.validateQuery = (sortBy, order) => {
 
   return allowedInputField.includes(sortBy) && allowedOrders.includes(order);
 };
+
+exports.validatePagination = (limit, p) => {
+  return !isNaN(limit) && !isNaN(p);
+};

@@ -1,5 +1,5 @@
 const db = require("../db/connection");
-const { validateQuery } = require("../db/seeds/utils");
+const { validateQuery, validatePagination } = require("../db/seeds/utils");
 const { checkTopicExists } = require("./topics-model");
 
 exports.selectArticleById = (article_id) => {
@@ -16,10 +16,13 @@ exports.selectArticleById = (article_id) => {
   });
 };
 
-exports.selectArticles = (topic, sort_by, order) => {
-  if (!sort_by) sort_by = "created_at";
-  if (!order) order = "desc";
-
+exports.selectArticles = (
+  topic,
+  sort_by = "created_at",
+  order = "desc",
+  limit = 10,
+  p
+) => {
   if (!validateQuery(sort_by, order)) {
     return Promise.reject({ status: 400, msg: "invalid query" });
   } else {
@@ -34,12 +37,19 @@ exports.selectArticles = (topic, sort_by, order) => {
           return rows;
         });
     } else {
-      const queryString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes,
+      let queryString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes,
       CAST(COUNT(comments.article_id) AS INT) AS comment_count
       FROM articles
       LEFT JOIN comments ON comments.article_id = articles.article_id 
       GROUP BY comments.article_id, articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes 
       ORDER BY ${sort_by} ${order}`;
+
+      if (p) {
+        if (!validatePagination(limit, p)) {
+          return Promise.reject({ status: 400, msg: "invalid query" });
+        }
+        queryString += ` LIMIT ${limit}`;
+      }
 
       return db.query(queryString).then(({ rows }) => {
         return rows;
@@ -107,5 +117,5 @@ exports.insertArticle = (
 exports.removeArticle = (article_id) => {
   const queryString = `DELETE FROM articles WHERE article_id = $1`;
 
-  return db.query(queryString, [article_id])
+  return db.query(queryString, [article_id]);
 };

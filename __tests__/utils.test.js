@@ -2,7 +2,8 @@ const {
   convertTimestampToDate,
   createRef,
   formatComments,
-  validateQuery
+  validateQuery,
+  validatePagination,
 } = require("../db/seeds/utils");
 
 describe("convertTimestampToDate", () => {
@@ -104,39 +105,77 @@ describe("formatComments", () => {
   });
 });
 
-describe('validateQuery()', () => {
-  test('returns input if its a valid field', () => {
-    const input = 'title'
+describe("validateQuery()", () => {
+  test("returns input if its a valid field", () => {
+    const input = "title";
 
-    const actual = validateQuery(input, 'asc')
+    const actual = validateQuery(input, "asc");
 
-    expect(actual).toBe(true)
-  })
-  test('returns false if field is invalid', () => {
-    const input = 'bananana'
-    const actual = validateQuery(input, 'asc')
-    expect(actual).toBe(false)
-  })
+    expect(actual).toBe(true);
+  });
+  test("returns false if field is invalid", () => {
+    const input = "bananana";
+    const actual = validateQuery(input, "asc");
+    expect(actual).toBe(false);
+  });
 
-  test('returns false if both fields are invalud', () => {
-    const inputSort = 'banana'
-    const inputOrder = 'apple'
+  test("returns false if both fields are invalud", () => {
+    const inputSort = "banana";
+    const inputOrder = "apple";
 
-    const actual = validateQuery(inputSort, inputOrder)
+    const actual = validateQuery(inputSort, inputOrder);
 
-    expect(actual).toBe(false)
-  })
+    expect(actual).toBe(false);
+  });
 
-  test('returns false if one value is invalid', () => {
-    const correctSort = 'body'
-    const correctOrder = 'asc'
-    const incorrectSort = 'help'
-    const incorrectOrder = 'while'
+  test("returns false if one value is invalid", () => {
+    const correctSort = "body";
+    const correctOrder = "asc";
+    const incorrectSort = "help";
+    const incorrectOrder = "while";
 
-    const actualIncorrectSort = validateQuery(incorrectSort, correctOrder)
-    const actualIncorrectOrder = validateQuery(correctSort, incorrectOrder)
+    const actualIncorrectSort = validateQuery(incorrectSort, correctOrder);
+    const actualIncorrectOrder = validateQuery(correctSort, incorrectOrder);
 
-    expect(actualIncorrectSort).toBe(false)
-    expect(actualIncorrectOrder).toBe(false)
-  })
-})
+    expect(actualIncorrectSort).toBe(false);
+    expect(actualIncorrectOrder).toBe(false);
+  });
+});
+
+describe("validatePagination()", () => {
+  test("returns true if both p and limit are numbers", () => {
+    const limit = 1;
+    const p = 1;
+
+    const actual = validatePagination(limit, p);
+
+    expect(actual).toBe(true);
+  });
+
+  test("returns false if p is not a number", () => {
+    const limit = 1;
+    const p = "p";
+
+    const actual = validatePagination(limit, p);
+
+    expect(actual).toBe(false);
+  });
+
+  test("returns false if limit is not a number", () => {
+    const limit = "hello";
+    const p = 10;
+
+    const actual = validatePagination(limit, p);
+
+    expect(actual).toBe(false);
+  });
+
+  test("returns false if both limit and p are not numers", () => {
+    const limit = "hello";
+    const p = 'bye';
+
+    const actual = validatePagination(limit, p);
+
+    expect(actual).toBe(false);
+  });
+});

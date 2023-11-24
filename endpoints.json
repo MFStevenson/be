@@ -10,8 +10,8 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all articles, the user can also query the topic which will only serve the user articles with that topic",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "serves an array of all articles, the user can also query the topic which will only serve the user articles with that topic. The limit and p queries can be used for pagination, limit will have a default value of 10 and p will be calculated from the limit",
+    "queries": ["author", "topic", "sort_by", "order", "limit", "p"],
     "exampleResponse": {
       "articles": [
         {

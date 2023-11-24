@@ -936,3 +936,54 @@ describe("Queries", () => {
       });
   });
 });
+
+describe("Pagination", () => {
+  describe("GET /api/articles (pagination)", () => {
+    test("GET 200: returns first 10 articles by default given first page", () => {
+      return request(app)
+        .get("/api/articles?p=1")
+        .expect(200)
+        .then(({ body }) => {
+          const { articles } = body;
+          expect(articles.length).toBe(10);
+          articles.forEach((article) => {
+            expect(typeof article.author).toBe("string");
+            expect(typeof article.title).toBe("string");
+            expect(typeof article.article_id).toBe("number");
+            expect(typeof article.topic).toBe("string");
+            expect(typeof article.created_at).toBe("string");
+            expect(typeof article.votes).toBe("number");
+            expect(typeof article.comment_count).toBe("number");
+          });
+        });
+    });
+
+    test("GET 200: returns first 3 articles given a limit and page 1", () => {
+      return request(app)
+        .get("/api/articles?limit=3&&p=1")
+        .expect(200)
+        .then(({ body }) => {
+          const { articles } = body;
+          expect(articles.length).toBe(3);
+        });
+    });
+
+    test("GET 400: returns an error when the limit is not a number", () => {
+      return request(app)
+        .get("/api/articles?limit=nan&&p=1")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("invalid query")
+        });
+    });
+
+    test("GET 400: returns an error when p is not a number", () => {
+      return request(app)
+        .get("/api/articles?limit=5&&p=nan")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("invalid query")
+        });
+    });
+  });
+});
