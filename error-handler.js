@@ -8,6 +8,7 @@ exports.handleCustomErrors = (err, req, res, next) => {
 
 exports.handlePsqlErrors = (err, req, res, next) => {
   if (err.code === "22P02" || err.code === "23503" || err.code === "23502") {
+    console.log(err.code)
     res.status(400).send({ msg: "Something wrong with input or body" });
   } else {
     next(err);
@@ -15,5 +16,6 @@ exports.handlePsqlErrors = (err, req, res, next) => {
 };
 
 exports.handleServerErrors = (err, req, res, next) => {
+  console.log(err)
   res.status(500).send("Internal server error");
 };

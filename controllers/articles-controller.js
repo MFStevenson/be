@@ -3,7 +3,10 @@ const {
   selectArticles,
   updateArticleVotes,
   checkArticleIdExists,
+  insertArticle,
 } = require("../models/articles-model");
+const { checkTopicExists } = require("../models/topics-model");
+const { checkUserExists } = require("../models/users-model");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
@@ -39,6 +42,21 @@ exports.patchVotes = (req, res, next) => {
     })
     .then((updatedArticle) => {
       return res.status(200).send({ updatedArticle });
+    })
+    .catch(next);
+};
+
+exports.postArticle = (req, res, next) => {
+  const { author, title, body, topic, article_img_url } = req.body;
+
+  const validationPromises = [checkUserExists(author), checkTopicExists(topic)];
+
+  Promise.all(validationPromises)
+    .then(() => {
+      return insertArticle(author, title, body, topic, article_img_url);
+    })
+    .then((postedArticle) => {
+      return res.status(201).send({ postedArticle });
     })
     .catch(next);
 };
