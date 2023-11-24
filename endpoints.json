@@ -127,5 +127,9 @@
       "created_at": 1602828180000,
       "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
     }
+  },
+  "POST /api/topics": {
+    "description": "Allows a user to add a topic and returns the topic added to the user",
+    "exampleResponse": { "slug": "new topic", "description": "a new topic" }
   }
 }

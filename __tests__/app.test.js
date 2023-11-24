@@ -361,7 +361,7 @@ describe("GET /api/users", () => {
       });
   });
 });
-describe("DELETE /api/comments/:commend_id", () => {
+describe("DELETE /api/comments/:comment_id", () => {
   test("DELETE 204: deletes the comment at the given id", () => {
     return request(app).delete("/api/comments/1").expect(204);
   });
@@ -764,6 +764,60 @@ describe("POST /api/articles", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("username not found");
+      });
+  });
+});
+
+describe("POST /api/topics", () => {
+  test("POST 201: returns the posted topic to the user when given valid information", () => {
+    const newTopic = { slug: "new topic", description: "a new topic" };
+
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then(({ body }) => {
+        const { newTopic } = body;
+        expect(newTopic).toEqual({
+          slug: "new topic",
+          description: "a new topic",
+        });
+      });
+  });
+
+  test("POST 400: returns an error when the user tries to post a topic that already exists", () => {
+    const newTopic = { slug: "mitch", description: "a new topic" };
+
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Something wrong with input or body");
+      });
+  });
+
+  test("POST 400: returns an error when the user does not provide a d topic", () => {
+    const newTopic = { description: "a description" };
+
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Something wrong with input or body");
+      });
+  });
+
+  test("POST 400: returns an error when the user does not provide a description of the topic", () => {
+    const newTopic = { slug: "mitch" };
+
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Something wrong with input or body");
       });
   });
 });

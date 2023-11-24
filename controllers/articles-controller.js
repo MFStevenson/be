@@ -57,6 +57,7 @@ exports.postArticle = (req, res, next) => {
     })
     .then((postedArticle) => {
       return res.status(201).send({ postedArticle });
+      
     })
     .catch(next);
 };
