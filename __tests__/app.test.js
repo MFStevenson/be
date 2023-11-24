@@ -822,6 +822,30 @@ describe("POST /api/topics", () => {
   });
 });
 
+describe("DELETE /api/articles/:article_id", () => {
+  test("DELETE 204: Returns a 204 status code when the article at article_id has been deleted", () => {
+    return request(app).delete("/api/articles/2").expect(204);
+  });
+
+  test("DELETE 400: returns error message when given an invalid comment_id", () => {
+    return request(app)
+      .delete("/api/articles/light")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Something wrong with input or body");
+      });
+  });
+
+  test("DELETE 404: returns error message when given a comment id that does not exist", () => {
+    return request(app)
+      .delete("/api/articles/1000")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Article not found");
+      });
+  });
+});
+
 describe("Queries", () => {
   describe("GET api/articles?topic", () => {
     test("GET 200: return the articles of a specific topic to a user when given a topic that exists", () => {

@@ -131,5 +131,8 @@
   "POST /api/topics": {
     "description": "Allows a user to add a topic and returns the topic added to the user",
     "exampleResponse": { "slug": "new topic", "description": "a new topic" }
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "Allows a user to delete an article based off of its id and returns status code 204"
   }
 }

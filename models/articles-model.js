@@ -94,10 +94,18 @@ exports.insertArticle = (
       (created_at = new Date()),
     ])
     .then(({ rows }) => {
-      return rows[0]
-    }).then((rows) => {
-      return this.selectArticleById(rows.article_id)
-    }).then((rows) => {
-      return rows
+      return rows[0];
     })
+    .then((rows) => {
+      return this.selectArticleById(rows.article_id);
+    })
+    .then((rows) => {
+      return rows;
+    });
+};
+
+exports.removeArticle = (article_id) => {
+  const queryString = `DELETE FROM articles WHERE article_id = $1`;
+
+  return db.query(queryString, [article_id])
 };
