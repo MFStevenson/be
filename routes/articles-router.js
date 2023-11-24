@@ -3,6 +3,7 @@ const {
   patchVotes,
   getArticles,
   postArticle,
+  deleteArticle,
 } = require("../controllers/articles-controller");
 const {
   getArticleComments,
@@ -11,13 +12,20 @@ const {
 
 const articleRouter = require("express").Router();
 
-articleRouter.route("/").get(getArticles).post(postArticle)
+articleRouter
+  .route("/")
+  .get(getArticles)
+  .post(postArticle)
 
-articleRouter.route("/:article_id").get(getArticleById).patch(patchVotes);
+articleRouter
+  .route("/:article_id")
+  .get(getArticleById)
+  .patch(patchVotes)
+  .delete(deleteArticle);
 
 articleRouter
   .route("/:article_id/comments")
   .get(getArticleComments)
-  .post(postComment)
+  .post(postComment);
 
 module.exports = articleRouter;

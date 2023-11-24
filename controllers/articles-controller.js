@@ -4,6 +4,7 @@ const {
   updateArticleVotes,
   checkArticleIdExists,
   insertArticle,
+  removeArticle,
 } = require("../models/articles-model");
 const { checkTopicExists } = require("../models/topics-model");
 const { checkUserExists } = require("../models/users-model");
@@ -57,7 +58,19 @@ exports.postArticle = (req, res, next) => {
     })
     .then((postedArticle) => {
       return res.status(201).send({ postedArticle });
-      
+    })
+    .catch(next);
+};
+
+exports.deleteArticle = (req, res, next) => {
+  const { article_id } = req.params;
+
+  checkArticleIdExists(article_id)
+    .then(() => {
+      return removeArticle(article_id);
+    })
+    .then(() => {
+      res.status(204).send();
     })
     .catch(next);
 };
