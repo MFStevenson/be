@@ -67,6 +67,10 @@ exports.updateArticleVotes = (article_id, inc_votes) => {
 
   return db.query(queryString, [inc_votes, article_id]).then(({ rows }) => {
     if (rows[0].votes < 0) {
+      db.query(
+        `UPDATE articles SET votes = 0 WHERE article_id = $1 RETURNING *;`,
+        [article_id]
+      );
       return Promise.reject({ status: 400, msg: "Something wrong with input" });
     } else {
       return rows[0];
