@@ -58,11 +58,17 @@ exports.updateCommentVotes = (inc_votes, comment_id) => {
 
   return db.query(queryString, [inc_votes, comment_id]).then(({ rows }) => {
     if (rows[0].votes < 0) {
-      db.query(
-        `UPDATE comments SET votes = 0 WHERE comment_id = $1 RETURNING *`,
-        [comment_id]
-      );
-      return Promise.reject({ status: 400, msg: "Something wrong with input" });
+      return db
+        .query(
+          `UPDATE comments SET votes = 0 WHERE comment_id = $1 RETURNING *`,
+          [comment_id]
+        )
+        .then(() => {
+          return Promise.reject({
+            status: 400,
+            msg: "Something wrong with input",
+          });
+        });
     } else {
       return rows[0];
     }
