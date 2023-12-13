@@ -848,7 +848,7 @@ describe("DELETE /api/articles/:article_id", () => {
 
 describe("Queries", () => {
   describe("GET api/articles?topic", () => {
-    test.only("GET 200: return the articles of a specific topic to a user when given a topic that exists", () => {
+    test("GET 200: return the articles of a specific topic to a user when given a topic that exists", () => {
       return request(app)
         .get("/api/articles?topic=mitch")
         .expect(200)
