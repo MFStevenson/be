@@ -26,7 +26,7 @@ exports.selectArticles = (topic, sort_by, order) => {
     if (topic) {
       return checkTopicExists(topic)
         .then(() => {
-          const queryString = `SELECT * FROM articles WHERE topic = $1  ORDER BY ${sort_by} ${order}`;
+          const queryString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, CAST(COUNT(comments.article_id) AS INT) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id WHERE topic = $1 GROUP BY comments.article_id, articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes ORDER BY ${sort_by} ${order}`;
 
           return db.query(queryString, [topic]);
         })
